@@ -28,3 +28,18 @@ Thumbs.db
 # Ignoring mvnw wrapper files (if not used)
 mvnw.cmd
 mvnw
+# Maven files
+/.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+/mvnw
+/mvnw.cmd
+
+# IntelliJ IDEA
+/.idea/
+/*.iml
+
+# Logs
+/logs
+
+# Miscellaneous
+/*.bak
