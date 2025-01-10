@@ -4,46 +4,52 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
+
     private final SuccessUserHandler successUserHandler;
 
     public WebSecurityConfig(SuccessUserHandler successUserHandler) {
         this.successUserHandler = successUserHandler;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/", "/index").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().successHandler(successUserHandler)
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
+                // Отключаем CSRF для упрощения
+                .csrf(csrf -> csrf.disable())
+                // Настройка авторизационных правил
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Только для ROLE_ADMIN
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // ROLE_USER и ROLE_ADMIN
+                        .requestMatchers("/login", "/error", "/").permitAll() // Доступ для всех
+                        .anyRequest().authenticated() // Все остальные запросы требуют авторизации
+                )
+                // Настройка логина
+                .formLogin(form -> form
+                        .loginPage("/login") // Указываем кастомную страницу логина
+                        .loginProcessingUrl("/process_login") // URL для обработки логина
+                        .successHandler(successUserHandler) // Используем SuccessUserHandler
+                        .failureUrl("/login?error") // Перенаправление при ошибке
+                        .permitAll()
+                )
+                // Настройка логаута
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // URL для логаута
+                        .logoutSuccessUrl("/login?logout") // Перенаправление после выхода
+                        .permitAll()
+                );
+
+        return http.build();
     }
 
-    // аутентификация inMemory
     @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("user")
-                        .roles("USER")
-                        .build();
-
-        return new InMemoryUserDetailsManager(user);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(); // Используем BCrypt для шифрования паролей
     }
 }

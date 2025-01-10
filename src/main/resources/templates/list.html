@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <style>
+        /* Основные стили */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fafc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table thead {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        table th, table td {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:hover {
+            background-color: #e6f7ff;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .actions a {
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1565C0;
+        }
+
+        .actions a:hover {
+            text-decoration: underline;
+        }
+
+        .actions form {
+            display: inline;
+        }
+
+        .actions button {
+            font-size: 14px;
+            cursor: pointer;
+            color: #D32F2F;
+            border: none;
+            background: none;
+        }
+
+        .actions button:hover {
+            text-decoration: underline;
+        }
+
+        .link-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .link-container a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .add-user {
+            background-color: #4CAF50;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .add-user:hover {
+            background-color: #388E3C;
+        }
+
+        .reset-ids {
+            background-color: #FFC107;
+            color: white;
+        }
+
+        .reset-ids:hover {
+            background-color: #FFA000;
+        }
+
+        .logout-container {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logout-container">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+
+    <h1>User List</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.email}"></td>
+            <td class="actions">
+                <a th:href="@{/admin/users/edit(id=${user.id})}" class="edit">Edit</a>
+                <form th:action="@{/admin/users/delete}" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${user.id}" />
+                    <button type="submit" class="delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="link-container">
+        <a th:href="@{/admin/users/new}" class="add-user">➕ Add New User</a>
+    </div>
+</div>
+</body>
+</html>

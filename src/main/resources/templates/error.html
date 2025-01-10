@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #fdfdfd;
+        }
+
+        .error-container {
+            border: 2px solid #ff6b6b;
+            background-color: #ffecec;
+            padding: 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 50px;
+        }
+
+        .error-icon {
+            font-size: 50px;
+            color: #ff6b6b;
+        }
+
+        .error-message {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #333333;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background-color: #388e3c;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h1>An Error Occurred</h1>
+    <p class="error-message" th:text="${error}">A technical error has occurred. Please try again later.</p>
+    <a th:href="@{/users}" class="back-button">⬅️ Back to User List</a>
+</div>
+</body>
+</html>

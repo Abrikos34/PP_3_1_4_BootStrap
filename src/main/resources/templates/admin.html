@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>User Page</title>
+    <title>Admin Page</title>
     <style>
+        /* Основные стили */
         body {
             font-family: Arial, sans-serif;
             background-color: #f9fafc;
@@ -15,48 +16,56 @@
         }
 
         .container {
+            width: 90%;
+            max-width: 800px;
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px 30px;
-            text-align: center;
+            margin-top: 20px;
         }
 
         h1 {
+            text-align: center;
             font-size: 24px;
             margin-bottom: 20px;
             color: #333333;
         }
 
         p {
-            font-size: 18px;
+            text-align: center;
             color: #555555;
+            margin-bottom: 20px;
         }
 
-        .logout-button {
+        .link-container {
             margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #4CAF50;
-            border: none;
-            border-radius: 4px;
-            text-decoration: none;
-            cursor: pointer;
+            text-align: center;
         }
 
-        .logout-button:hover {
+        .link-container a {
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .link-container a:hover {
             background-color: #388E3C;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Welcome, <span th:text="${user.username}">[Username]</span>!</h1>
-    <p>Your email: <span th:text="${user.email}">[Email]</span></p>
-    <p>Your roles: <span th:each="role : ${user.roles}" th:text="${role.name}">[Role]</span></p>
-
-    <a href="/logout" class="logout-button">Logout</a>
+    <h1>Admin Page</h1>
+    <!-- Добавлено условие проверки на null -->
+    <p th:text="'Welcome, ' + (${#authentication != null ? #authentication.name : 'Guest'}) + '!'">Welcome!</p>
+    <div class="link-container">
+        <a th:href="@{/admin/users}" class="view-users">View Users</a>
+    </div>
 </div>
 </body>
 </html>

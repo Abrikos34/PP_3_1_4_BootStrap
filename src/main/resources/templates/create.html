@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fafc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px 30px;
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            text-align: left;
+            font-weight: bold;
+            color: #555555;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #388E3C;
+        }
+
+        .error {
+            color: #d32f2f;
+            font-size: 14px;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            color: #555555;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Create User</h1>
+    <form th:action="@{/admin/users/save}" method="POST">
+        <!-- Исправлено: поле имени пользователя теперь совпадает с полем 'username' в модели -->
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" th:value="${user.username}" required>
+
+        <!-- Поле email -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" th:value="${user.email}" required>
+
+        <!-- Поле для пароля -->
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+
+        <!-- Поле для ролей -->
+        <label for="roles">Roles:</label>
+        <select id="roles" name="roles" multiple required>
+            <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+        </select>
+
+        <!-- Отображение ошибки -->
+        <div th:if="${error}" th:text="${error}" class="error"></div>
+
+        <!-- Кнопка отправки -->
+        <button type="submit">Save</button>
+    </form>
+
+    <!-- Ссылка на список пользователей -->
+    <a th:href="@{/admin/users}" class="back-link">⬅️ Back to User List</a>
+</div>
+</body>
+</html>
