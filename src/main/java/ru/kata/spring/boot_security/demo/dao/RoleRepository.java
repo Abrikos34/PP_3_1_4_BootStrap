@@ -8,7 +8,6 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import java.util.Optional;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
-    // Возвращаем Optional для обработки возможного отсутствия роли
     @Query("SELECT r FROM Role r WHERE r.name = :name")
     Optional<Role> findByName(@Param("name") String name);
 }

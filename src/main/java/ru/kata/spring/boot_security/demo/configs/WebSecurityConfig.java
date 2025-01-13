@@ -21,16 +21,13 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Отключаем CSRF для упрощения
                 .csrf(csrf -> csrf.disable())
-                // Настройка авторизационных правил
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Только для ROLE_ADMIN
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // ROLE_USER и ROLE_ADMIN
                         .requestMatchers("/login", "/error", "/").permitAll() // Доступ для всех
                         .anyRequest().authenticated() // Все остальные запросы требуют авторизации
                 )
-                // Настройка логина
                 .formLogin(form -> form
                         .loginPage("/login") // Указываем кастомную страницу логина
                         .loginProcessingUrl("/process_login") // URL для обработки логина
@@ -38,7 +35,6 @@ public class WebSecurityConfig {
                         .failureUrl("/login?error") // Перенаправление при ошибке
                         .permitAll()
                 )
-                // Настройка логаута
                 .logout(logout -> logout
                         .logoutUrl("/logout") // URL для логаута
                         .logoutSuccessUrl("/login?logout") // Перенаправление после выхода

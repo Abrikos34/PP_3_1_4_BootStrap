@@ -26,13 +26,11 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Проверяем существование ролей
         Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                 .orElseGet(() -> roleRepository.save(new Role("ROLE_ADMIN")));
         Role userRole = roleRepository.findByName("ROLE_USER")
                 .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
 
-        // Проверяем существование пользователей
         if (userService.getUserByEmail("admin@example.com") == null) {
             User admin = new User("admin", passwordEncoder.encode("admin"), "admin@example.com", Set.of(adminRole));
             userService.saveUser(admin);

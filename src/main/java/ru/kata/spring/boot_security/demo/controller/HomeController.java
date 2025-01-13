@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-    @GetMapping("/") // Перенаправление с корня
+    @GetMapping("/")
     public String redirectToHomePage() {
-        return "redirect:/users"; // Или другой маршрут
+        return "redirect:/users";
     }
 
-    @GetMapping("/login") // Добавляем обработчик для страницы входа
+    @GetMapping("/login")
     public String loginPage() {
-        return "login"; // Убедитесь, что login.html существует в папке templates
+        return "login";
     }
 }

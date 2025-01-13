@@ -5,7 +5,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 
 import java.util.Optional;
 
-public interface UserDao extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username); // Метод для поиска пользователя по имени
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
 }

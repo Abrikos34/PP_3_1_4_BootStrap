@@ -42,7 +42,6 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    // Геттеры и сеттеры
 
     public Long getId() {
         return id;
@@ -65,7 +64,6 @@ public class User implements UserDetails {
     }
 
     public void setPassword(String password) {
-        // Убедимся, что пароль не пустой перед сохранением
         if (password == null || password.isEmpty()) {
             throw new IllegalArgumentException("Password cannot be null or empty");
         }
