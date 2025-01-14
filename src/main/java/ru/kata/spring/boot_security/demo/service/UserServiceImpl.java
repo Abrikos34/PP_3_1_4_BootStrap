@@ -33,8 +33,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUser(User user) {
+        validateUniqueEmail(user);
         processUserPassword(user);
-        validateUniqueUsername(user);
         userDao.save(user);
     }
 
@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
     public void saveUserWithRoles(User user, List<Long> roleIds) {
         Set<Role> roles = roleService.getRolesByIds(roleIds);
         user.setRoles(roles);
+        validateUniqueEmail(user);
         processUserPassword(user);
         userDao.save(user);
     }
@@ -70,10 +71,10 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void validateUniqueUsername(User user) {
-        userDao.findByUsername(user.getUsername()).ifPresent(existingUser -> {
+    private void validateUniqueEmail(User user) {
+        userDao.findByEmail(user.getEmail()).ifPresent(existingUser -> {
             if (!existingUser.getId().equals(user.getId())) {
-                throw new RuntimeException("Ошибка: Пользователь с таким именем уже существует!");
+                throw new RuntimeException("Ошибка: Пользователь с таким email уже существует!");
             }
         });
     }
@@ -99,9 +100,4 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("Пользователь с email " + email + " не найден"));
     }
 
-    @Override
-    public User getUserByUsername(String username) {
-        return userDao.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь с именем " + username + " не найден"));
-    }
 }

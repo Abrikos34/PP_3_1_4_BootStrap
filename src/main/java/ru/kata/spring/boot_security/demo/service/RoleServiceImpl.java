@@ -19,6 +19,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Set<Role> getRolesByIds(List<Long> ids) {
+        System.out.println("Fetching roles by IDs: " + ids);
+
         return ids.stream()
                 .map(id -> roleRepository.findById(id)
                         .orElseThrow(() -> new RuntimeException("Role not found: " + id)))
@@ -27,6 +29,8 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+        List<Role> roles = roleRepository.findAll();
+        System.out.println("Fetched all roles: " + roles);
+        return roles;
     }
 }

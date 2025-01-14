@@ -15,14 +15,21 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique = true, nullable = false)
-    private String username;
 
     @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "age")
+    private Integer age;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -35,13 +42,25 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String username, String password, String email, Set<Role> roles) {
-        this.username = username;
-        this.password = password;
+    public User(String email, String password, Set<Role> roles) {
         this.email = email;
+        this.password = password;
         this.roles = roles;
     }
 
+    public User(String email,
+                String password,
+                String firstName,
+                String lastName,
+                Integer age,
+                Set<Role> roles) {
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.roles = roles;
+    }
 
     public Long getId() {
         return id;
@@ -49,14 +68,6 @@ public class User implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -78,12 +89,41 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     @Override

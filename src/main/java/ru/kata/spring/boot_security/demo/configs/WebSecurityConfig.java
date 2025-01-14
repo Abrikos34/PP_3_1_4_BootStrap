@@ -23,21 +23,23 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // Только для ROLE_ADMIN
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // ROLE_USER и ROLE_ADMIN
-                        .requestMatchers("/login", "/error", "/").permitAll() // Доступ для всех
-                        .anyRequest().authenticated() // Все остальные запросы требуют авторизации
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/login", "/error", "/").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Указываем кастомную страницу логина
-                        .loginProcessingUrl("/process_login") // URL для обработки логина
-                        .successHandler(successUserHandler) // Используем SuccessUserHandler
-                        .failureUrl("/login?error") // Перенаправление при ошибке
+                        .loginPage("/login")
+                        .loginProcessingUrl("/process_login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .successHandler(successUserHandler)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // URL для логаута
-                        .logoutSuccessUrl("/login?logout") // Перенаправление после выхода
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 );
 
@@ -46,6 +48,6 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Используем BCrypt для шифрования паролей
+        return new BCryptPasswordEncoder();
     }
 }

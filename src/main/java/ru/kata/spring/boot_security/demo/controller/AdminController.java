@@ -26,61 +26,74 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping
-    public String showAdminPage(Model model) {
-        model.addAttribute("message", "Welcome to the Admin Page!");
-        model.addAttribute("name", "Admin User");
-        return "admin";
+
+    @GetMapping("/users")
+    public String showUserList(Model model, Principal principal) {
+        addCurrentUserToModel(model, principal);
+        model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("user", new User());
+        model.addAttribute("roles", roleService.getAllRoles());
+        model.addAttribute("page", "admin");
+        return "list";
     }
 
+
     @GetMapping("/profile")
-    public String showAdminProfile(Model model, Principal principal) {
+    public String showProfile(Model model, Principal principal) {
         if (principal == null || principal.getName() == null) {
             model.addAttribute("error", "User not authenticated.");
             return "error";
         }
         try {
-            User admin = userService.getUserByUsername(principal.getName());
-            model.addAttribute("admin", admin);
-            return "adminProfile";
+            User currentUser = userService.getUserByEmail(principal.getName());
+            addCurrentUserToModel(model, principal);
+
+            model.addAttribute("user", currentUser);
+            model.addAttribute("page", "user");
+            return "list";
         } catch (Exception e) {
+            logger.error("Error retrieving user profile: {}", e.getMessage());
             model.addAttribute("error", "Ошибка при получении данных профиля.");
             return "error";
         }
     }
 
-    @GetMapping("/users")
-    public String showUserList(Model model) {
-        model.addAttribute("users", userService.getAllUsers());
-        return "list";
-    }
-
-    @GetMapping("/users/new")
-    public String showCreateUserForm(Model model) {
-        model.addAttribute("user", new User());
-        model.addAttribute("roles", roleService.getAllRoles());
-        return "create";
-    }
-
     @PostMapping("/users/save")
-    public String saveUser(@ModelAttribute User user, @RequestParam("roles") List<Long> roleIds, Model model) {
-        return handleUserSaveOrUpdate(() -> userService.saveUserWithRoles(user, roleIds), model, "create");
+    public String saveUser(@ModelAttribute User user,
+                           @RequestParam("roles") List<Long> roleIds,
+                           Model model, Principal principal) {
+        addCurrentUserToModel(model, principal);
+        return handleUserSaveOrUpdate(() -> userService.saveUserWithRoles(user, roleIds),
+                model, "list");
     }
 
     @GetMapping("/users/edit")
-    public String showEditUserForm(@RequestParam Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("roles", roleService.getAllRoles());
-        return "edit";
+    public String showEditUserForm(@RequestParam Long id, Model model, Principal principal) {
+        addCurrentUserToModel(model, principal);
+        try {
+            User user = userService.getUserById(id);
+            model.addAttribute("user", user);
+            model.addAttribute("roles", roleService.getAllRoles());
+            return "edit";
+        } catch (RuntimeException e) {
+            logger.error("Error loading user for edit: {}", e.getMessage());
+            model.addAttribute("error", "User not found: " + e.getMessage());
+            return "redirect:/admin/users";
+        }
     }
 
     @PostMapping("/users/update")
-    public String updateUser(@ModelAttribute User user, @RequestParam("roles") List<Long> roleIds, Model model) {
-        return handleUserSaveOrUpdate(() -> userService.saveUserWithRoles(user, roleIds), model, "edit");
+    public String updateUser(@ModelAttribute User user,
+                             @RequestParam("roles") List<Long> roleIds,
+                             Model model, Principal principal) {
+        addCurrentUserToModel(model, principal);
+        return handleUserSaveOrUpdate(() -> userService.saveUserWithRoles(user, roleIds),
+                model, "edit");
     }
 
     @PostMapping("/users/delete")
-    public String deleteUser(@RequestParam("id") Long id, Model model) {
+    public String deleteUser(@RequestParam("id") Long id, Model model, Principal principal) {
+        addCurrentUserToModel(model, principal);
         try {
             userService.deleteUser(id);
         } catch (RuntimeException e) {
@@ -99,6 +112,17 @@ public class AdminController {
             model.addAttribute("error", "Ошибка: " + e.getMessage());
             model.addAttribute("roles", roleService.getAllRoles());
             return viewName;
+        }
+    }
+
+    private void addCurrentUserToModel(Model model, Principal principal) {
+        if (principal != null && principal.getName() != null) {
+            try {
+                User currentUser = userService.getUserByEmail(principal.getName());
+                model.addAttribute("currentUser", currentUser);
+            } catch (Exception e) {
+                logger.error("Error retrieving current user: {}", e.getMessage());
+            }
         }
     }
 }
