@@ -7,8 +7,8 @@
         .sidebar {
             background-color: #ffffff; /* Белый фон */
             height: 100vh;
-            padding: 20px;
-            width: 200px; /* Уменьшенная ширина */
+            padding: 20px 20px 20px 30px; /* Добавляем больше отступа слева */
+            width: 260px; /* Уменьшенная ширина */
             border-right: 1px solid #ddd; /* Разделительная линия */
         }
 
@@ -29,10 +29,9 @@
         }
 
         .sidebar a:hover {
-            background-color: #0056b3;
+            background-color: #0066ff; /* Более яркий синий */
             color: white;
         }
-
 
         .main-content {
             padding: 20px;
@@ -47,23 +46,43 @@
 
         .navbar-text {
             color: white;
+            font-weight: normal; /* Убираем жирный шрифт для текста, кроме email */
         }
 
-        .navbar-text span {
+        .logout-button {
+            background: none; /* Убираем фон */
+            border: none; /* Убираем границу */
+            color: #cccccc; /* не белый текста */
+            font-size: 16px; /* Размер шрифта */
+            cursor: pointer; /* Изменяем курсор */
+        }
+
+        .logout-button:hover {
+            text-decoration: underline; /* Подчеркивание при наведении */
+        }
+
+        .table {
+            margin: 0 auto; /* Центрируем таблицу */
+            text-align: center; /* Выравниваем текст по центру */
+        }
+
+        .table th {
+            background-color: #f8f9fa; /* Светло-серый фон для заголовка */
             font-weight: bold;
+            text-transform: uppercase; /* Заглавные буквы */
         }
 
-        .navbar .logout-link {
-            color: white;
-            text-decoration: none;
-            padding: 5px;
-            border-radius: 5px;
-            background-color: #dc3545;
+        .table td {
+            vertical-align: middle; /* Выравнивание текста по вертикали */
         }
 
-        .navbar .logout-link:hover {
-            background-color: #c82333;
-            color: white;
+        .card-header {
+            font-weight: bold; /* Жирный текст для "About user" */
+        }
+
+        .text-left {
+            text-align: left;
+            margin-left: 20px; /* Добавляем небольшой отступ слева */
         }
     </style>
 </head>
@@ -71,15 +90,12 @@
 <nav class="navbar navbar-dark">
     <div class="container-fluid">
         <span class="navbar-text">
-            <span th:if="${currentUser != null}">
-                <strong>Email:</strong> <span th:text="${currentUser.email}">[Email]</span>
-                <strong>Role:</strong>
-                <span th:each="role : ${currentUser.roles}" th:text="${role.name}">[Role]</span>
-            </span>
-            <span th:if="${currentUser == null}">Guest</span>
+            <span><strong th:text="${currentUser.email}">[Email]</strong></span>
+            <span> with roles: </span>
+            <span th:each="role : ${currentUser.roles}" th:text="${role.name}">[Role]</span>
         </span>
         <form th:action="@{/logout}" method="post" class="ms-auto">
-            <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+            <button type="submit" class="logout-button">Logout</button>
         </form>
     </div>
 </nav>
@@ -92,13 +108,13 @@
 
         <!-- Main Content -->
         <div class="col-md-10 main-content">
-            <h2 class="text-center">User Information Page</h2>
+            <h2 class="text-left">User Information Page</h2>
             <div class="card mt-3">
                 <div class="card-header">
                     About user
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
+                    <table class="table table-striped">
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -106,7 +122,7 @@
                             <th>Last Name</th>
                             <th>Age</th>
                             <th>Email</th>
-                            <th>Roles</th>
+                            <th>Role</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -116,9 +132,7 @@
                             <td th:text="${currentUser.lastName}">[Last Name]</td>
                             <td th:text="${currentUser.age}">[Age]</td>
                             <td th:text="${currentUser.email}">[Email]</td>
-                            <td>
-                                <span th:each="role : ${currentUser.roles}" th:text="${role.name}"></span>
-                            </td>
+                            <td th:text="${currentUser.roles[0].name}">[Role]</td>
                         </tr>
                         </tbody>
                     </table>
