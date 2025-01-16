@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
-
+import java.util.Map;
 import java.security.Principal;
 import java.util.List;
 
@@ -91,17 +91,22 @@ public class UserRestController {
         }
     }
 
+
+
     // Обновить пользователя (только для админов)
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
         try {
             user.setId(id);
             userService.saveUser(user);
-            return ResponseEntity.ok("Пользователь успешно обновлён!");
+            // Возвращаем JSON-объект вместо строки
+            return ResponseEntity.ok(Map.of("message", "Пользователь успешно обновлён!"));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
+
 
     // Удалить пользователя (только для админов)
     @DeleteMapping("/{id}")
