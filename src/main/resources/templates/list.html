@@ -393,15 +393,15 @@
                                 <td class="text-center">
                                     <span th:each="role : ${currentUser.roles}" th:text="${role.name}"></span>
                                 </td>
-                    </tr>
-                    </tbody>
-                </table>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<!-- Edit User Modal -->
+        <!-- Edit User Modal -->
         <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content p-4">
@@ -454,104 +454,104 @@
                                 <button type="submit" class="btn btn-primary">Edit</button>
                             </div>
                         </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<script>
-    function openEditModal(button) {
-        const id = button.getAttribute('data-id');
-        const firstName = button.getAttribute('data-firstname');
-        const lastName = button.getAttribute('data-lastname');
-        const age = button.getAttribute('data-age');
-        const email = button.getAttribute('data-email');
+        <script>
+            function openEditModal(button) {
+                const id = button.getAttribute('data-id');
+                const firstName = button.getAttribute('data-firstname');
+                const lastName = button.getAttribute('data-lastname');
+                const age = button.getAttribute('data-age');
+                const email = button.getAttribute('data-email');
 
-        document.getElementById('edit-id').value = id || '';
-        document.getElementById('edit-firstName').value = firstName || '';
-        document.getElementById('edit-lastName').value = lastName || '';
-        document.getElementById('edit-age').value = age || '';
-        document.getElementById('edit-email').value = email || '';
-        document.getElementById('edit-password').value = '';
+                document.getElementById('edit-id').value = id || '';
+                document.getElementById('edit-firstName').value = firstName || '';
+                document.getElementById('edit-lastName').value = lastName || '';
+                document.getElementById('edit-age').value = age || '';
+                document.getElementById('edit-email').value = email || '';
+                document.getElementById('edit-password').value = '';
 
-        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
-        modal.show();
-    }
-</script>
+                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                modal.show();
+            }
+        </script>
 
-<!-- Delete User Modal -->
-<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm"> <!-- Уменьшенная ширина модального окна -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form th:action="@{/admin/users/delete}" method="post">
-                    <!-- ID -->
-                    <div class="mb-3">
-                        <label for="delete-id" class="form-label">ID</label>
-                        <input type="text" id="delete-id" name="id" class="form-control readonly-field" readonly />
+        <!-- Delete User Modal -->
+        <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm"> <!-- Уменьшенная ширина модального окна -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <!-- First Name -->
-                    <div class="mb-3">
-                        <label for="delete-firstName" class="form-label">First Name</label>
-                        <input type="text" id="delete-firstName" class="form-control readonly-field" readonly />
+                    <div class="modal-body">
+                        <form th:action="@{/admin/users/delete}" method="post">
+                            <!-- ID -->
+                            <div class="mb-3">
+                                <label for="delete-id" class="form-label">ID</label>
+                                <input type="text" id="delete-id" name="id" class="form-control readonly-field" readonly />
+                            </div>
+                            <!-- First Name -->
+                            <div class="mb-3">
+                                <label for="delete-firstName" class="form-label">First Name</label>
+                                <input type="text" id="delete-firstName" class="form-control readonly-field" readonly />
+                            </div>
+                            <!-- Last Name -->
+                            <div class="mb-3">
+                                <label for="delete-lastName" class="form-label">Last Name</label>
+                                <input type="text" id="delete-lastName" class="form-control readonly-field" readonly />
+                            </div>
+                            <!-- Age -->
+                            <div class="mb-3">
+                                <label for="delete-age" class="form-label">Age</label>
+                                <input type="text" id="delete-age" class="form-control readonly-field" readonly />
+                            </div>
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="delete-email" class="form-label">Email</label>
+                                <input type="text" id="delete-email" class="form-control readonly-field" readonly />
+                            </div>
+                            <!-- Role -->
+                            <div class="mb-3">
+                                <label for="delete-roles" class="form-label">Role</label>
+                                <input type="text" id="delete-roles" class="form-control readonly-field" readonly />
+                            </div>
+                            <div class="text-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
                     </div>
-                    <!-- Last Name -->
-                    <div class="mb-3">
-                        <label for="delete-lastName" class="form-label">Last Name</label>
-                        <input type="text" id="delete-lastName" class="form-control readonly-field" readonly />
-                    </div>
-                    <!-- Age -->
-                    <div class="mb-3">
-                        <label for="delete-age" class="form-label">Age</label>
-                        <input type="text" id="delete-age" class="form-control readonly-field" readonly />
-                    </div>
-                    <!-- Email -->
-                    <div class="mb-3">
-                        <label for="delete-email" class="form-label">Email</label>
-                        <input type="text" id="delete-email" class="form-control readonly-field" readonly />
-                    </div>
-                    <!-- Role -->
-                    <div class="mb-3">
-                        <label for="delete-roles" class="form-label">Role</label>
-                        <input type="text" id="delete-roles" class="form-control readonly-field" readonly />
-                    </div>
-                    <div class="text-end">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
 
-<script>
-    function openDeleteModal(button) {
-        const id = button.getAttribute('data-id');
-        const firstName = button.getAttribute('data-firstname');
-        const lastName = button.getAttribute('data-lastname');
-        const age = button.getAttribute('data-age');
-        const email = button.getAttribute('data-email');
-        const roles = button.getAttribute('data-roles');
+        <script>
+            function openDeleteModal(button) {
+                const id = button.getAttribute('data-id');
+                const firstName = button.getAttribute('data-firstname');
+                const lastName = button.getAttribute('data-lastname');
+                const age = button.getAttribute('data-age');
+                const email = button.getAttribute('data-email');
+                const roles = button.getAttribute('data-roles');
 
-        // Заполняем поля модального окна
-        document.getElementById('delete-id').value = id || '';
-        document.getElementById('delete-firstName').value = firstName || '';
-        document.getElementById('delete-lastName').value = lastName || '';
-        document.getElementById('delete-age').value = age || '';
-        document.getElementById('delete-email').value = email || '';
-        document.getElementById('delete-roles').value = roles || '';
+                // Заполняем поля модального окна
+                document.getElementById('delete-id').value = id || '';
+                document.getElementById('delete-firstName').value = firstName || '';
+                document.getElementById('delete-lastName').value = lastName || '';
+                document.getElementById('delete-age').value = age || '';
+                document.getElementById('delete-email').value = email || '';
+                document.getElementById('delete-roles').value = roles || '';
 
-        // Отображаем модальное окно
-        const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
-        modal.show();
-    }
-</script>
+                // Отображаем модальное окно
+                const modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+                modal.show();
+            }
+        </script>
     </div>
 </div>
 
