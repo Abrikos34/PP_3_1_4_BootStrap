@@ -29,7 +29,7 @@
         const errorMessage = document.getElementById('error-message');
 
         loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+            event.preventDefault(); // Останавливаем перезагрузку страницы при отправке формы
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -48,25 +48,32 @@
                 });
 
                 if (response.ok) {
-                    // Получить роль пользователя и перенаправить в зависимости от роли
+                    // Запросить профиль пользователя после успешного логина
                     const userResponse = await fetch('/api/users/profile', { credentials: 'include' });
                     if (userResponse.ok) {
                         const user = await userResponse.json();
                         const roles = user.roles.map(role => role.name);
+
+                        // Перенаправление в зависимости от роли
                         if (roles.includes('ROLE_ADMIN')) {
-                            window.location.href = '/admin/users';
+                            window.location.href = '/admin/users'; // Если роль ADMIN, перенаправляем в админскую панель
                         } else {
-                            window.location.href = '/user';
+                            window.location.href = '/user'; // Если роль USER, перенаправляем на страницу пользователя
                         }
                     } else {
+                        // Ошибка при получении данных профиля
                         console.error('Failed to fetch user profile.');
+                        errorMessage.textContent = 'Failed to load user profile. Please try again.';
                         errorMessage.style.display = 'block';
                     }
                 } else {
+                    // Если логин не успешен
+                    errorMessage.textContent = 'Invalid email or password.';
                     errorMessage.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again later.';
                 errorMessage.style.display = 'block';
             }
         });

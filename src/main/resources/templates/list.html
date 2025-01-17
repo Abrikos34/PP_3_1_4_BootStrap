@@ -12,6 +12,8 @@
             padding: 0;
         }
 
+
+
         .sidebar {
             background-color: #ffffff;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Легкая тень для выделения */
@@ -32,11 +34,7 @@
             border-radius: 5px;
         }
 
-        .sidebar {
-            background-color: #ffffff;
-            height: 100vh;
-            padding: 20px;
-        }
+
 
         .sidebar a {
             color: #000000;
@@ -243,13 +241,14 @@
     <div class="row">
         <!-- Sidebar -->
         <div class="col-md-2 sidebar">
-            <a href="/admin/users" th:classappend="${page == 'admin' ? 'active' : ''}">Admin</a>
-            <a href="/admin/profile" th:classappend="${page == 'user' ? 'active' : ''}">User</a>
+            <a href="#" id="adminTab" class="active" onclick="loadTab('admin')">Admin</a>
+            <a href="#" id="userTab" onclick="loadTab('user')">User</a>
         </div>
 
         <!-- Main Content -->
         <div class="col-md-10 main-content">
-            <div th:if="${page == 'admin'}">
+            <!-- Контент для вкладки Admin -->
+            <div id="adminContent" style="display: block;">
                 <h1>Admin Panel</h1>
 
                 <!-- Tabs for Users and New User -->
@@ -296,7 +295,7 @@
                             <h5 class="modal-title" style="margin: 0; font-weight: bold;">Add new user</h5>
                         </div>
                         <div class="modal-body" style="background-color: #ffffff; padding: 20px;">
-                            <form th:action="@{/admin/users/save}" method="post" class="mx-auto" style="max-width: 400px;">
+                            <form id="createUserForm" class="mx-auto" style="max-width: 400px;">
                                 <!-- First name -->
                                 <div class="mb-3">
                                     <label for="firstName" class="form-label">First name</label>
@@ -342,42 +341,236 @@
                 </div>
             </div>
 
+
+
+            <script>
+                document.getElementById('createUserForm').addEventListener('submit', function (event) {
+                    event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+                    // Собираем данные из формы
+                    const formData = new FormData(document.getElementById('createUserForm'));
+                    const selectedRoleId = formData.get('roles'); // Получаем ID выбранной роли
+
+                    if (!selectedRoleId) {
+                        alert('Please select a role!');
+                        return;
+                    }
+
+                    // Создаем объект нового пользователя
+                    const newUser = {
+                        firstName: formData.get('firstName') || '',
+                        lastName: formData.get('lastName') || '',
+                        age: parseInt(formData.get('age'), 10) || 0,
+                        email: formData.get('email') || '',
+                        password: formData.get('password') || '',
+                        roles: [{ id: parseInt(selectedRoleId, 10) }] // Передаем массив объектов с ID роли
+                    };
+
+                    console.log('Данные перед отправкой:', JSON.stringify(newUser)); // Логируем данные перед отправкой
+
+                    // Отправляем данные через Fetch API
+                    fetch('/api/users', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newUser)
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                return response.text().then(errMessage => {
+                                    throw new Error(`Ошибка создания пользователя: ${errMessage}`);
+                                });
+                            }
+                        })
+                        .then(user => {
+                            document.getElementById('createUserForm').reset(); // Сбрасываем форму
+                            loadUsers(); // Перезагружаем таблицу пользователей
+                        })
+                        .catch(error => {
+                            console.error('Ошибка:', error);
+                            alert(`Ошибка создания пользователя: ${error.message}`);
+                        });
+                });
+            </script>
+
+
+
+
+
             <!-- Profile View -->
-            <div th:if="${page == 'user'}" class="mt-4">
-                <h1 class="mb-4">User Information Page</h1>
-                <div class="card">
-                    <div class="card-header">
-                        <strong>About user</strong>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-striped">
-                            <thead class="table-light">
-                            <tr>
-                                <th class="text-center">ID</th>
-                                <th class="text-center">First Name</th>
-                                <th class="text-center">Last Name</th>
-                                <th class="text-center">Age</th>
-                                <th class="text-center">Email</th>
-                                <th class="text-center">Role</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="text-center" th:text="${currentUser.id}"></td>
-                                <td class="text-center" th:text="${currentUser.firstName}"></td>
-                                <td class="text-center" th:text="${currentUser.lastName}"></td>
-                                <td class="text-center" th:text="${currentUser.age}"></td>
-                                <td class="text-center" th:text="${currentUser.email}"></td>
-                                <td class="text-center">
-                                    <span th:each="role : ${currentUser.roles}" th:text="${role.name}"></span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
+<!--            <div th:if="${page == 'user'}" class="mt-4">-->
+<!--                <h1 class="mb-4">User Information Page</h1>-->
+<!--                <div class="card">-->
+<!--                    <div class="card-header">-->
+<!--                        <strong>About user</strong>-->
+<!--                    </div>-->
+<!--                    <div class="card-body">-->
+<!--                        <table class="table table-striped">-->
+<!--                            <thead class="table-light">-->
+<!--                            <tr>-->
+<!--                                <th class="text-center">ID</th>-->
+<!--                                <th class="text-center">First Name</th>-->
+<!--                                <th class="text-center">Last Name</th>-->
+<!--                                <th class="text-center">Age</th>-->
+<!--                                <th class="text-center">Email</th>-->
+<!--                                <th class="text-center">Role</th>-->
+<!--                            </tr>-->
+<!--                            </thead>-->
+<!--                            <tbody>-->
+<!--                            <tr>-->
+<!--                                <td class="text-center" th:text="${currentUser.id}"></td>-->
+<!--                                <td class="text-center" th:text="${currentUser.firstName}"></td>-->
+<!--                                <td class="text-center" th:text="${currentUser.lastName}"></td>-->
+<!--                                <td class="text-center" th:text="${currentUser.age}"></td>-->
+<!--                                <td class="text-center" th:text="${currentUser.email}"></td>-->
+<!--                                <td class="text-center">-->
+<!--                                    <span th:each="role : ${currentUser.roles}" th:text="${role.name}"></span>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            </tbody>-->
+<!--                        </table>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+        <!-- Контент для вкладки User -->
+        <div id="userContent" style="display: none;">
+            <h1 class="mb-4">User Information Page</h1>
+            <div class="card">
+                <div class="card-header">
+                    <strong>About user</strong>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead class="table-light">
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">First Name</th>
+                            <th class="text-center">Last Name</th>
+                            <th class="text-center">Age</th>
+                            <th class="text-center">Email</th>
+                            <th class="text-center">Role</th>
+                        </tr>
+                        </thead>
+                        <tbody id="userProfileTableBody">
+                        <!-- JS динамически заполнит эти данные -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
+
+
+        <script>
+            function loadTab(tab) {
+                // Убираем активный класс со всех ссылок в боковом меню
+                document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
+
+                // Добавляем активный класс только для текущей вкладки
+                const currentTabLink = document.querySelector(`#${tab}Tab`);
+                if (currentTabLink) {
+                    currentTabLink.classList.add('active');
+                }
+
+                // Скрываем контент всех вкладок
+                const adminContent = document.getElementById('adminContent');
+                const userContent = document.getElementById('userContent');
+
+                if (adminContent) adminContent.style.display = 'none';
+                if (userContent) userContent.style.display = 'none';
+
+                // Показываем контент только для выбранной вкладки
+                if (tab === 'admin') {
+                    if (adminContent) adminContent.style.display = 'block';
+
+                    // Загружаем пользователей для вкладки Admin
+                    fetch('/api/users')
+                        .then(response => response.json())
+                        .then(users => renderUsersTable(users))
+                        .catch(error => console.error('Ошибка при загрузке пользователей:', error));
+                } else if (tab === 'user') {
+                    if (userContent) userContent.style.display = 'block';
+
+                    // Загружаем профиль текущего пользователя
+                    fetch('/api/users/profile')
+                        .then(response => response.json())
+                        .then(user => renderUserProfile(user))
+                        .catch(error => {
+                            console.error('Ошибка при загрузке профиля пользователя:', error);
+                            alert('Не удалось загрузить профиль пользователя.');
+                        });
+                }
+            }
+
+        </script>
+
+    <script>
+        // Функция для отображения профиля текущего пользователя
+        function renderUserProfile(user) {
+            const tableBody = document.getElementById("userProfileTableBody");
+
+            // Очистить таблицу перед добавлением новых данных
+            tableBody.innerHTML = '';
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td class="text-center">${user.id}</td>
+        <td class="text-center">${user.firstName}</td>
+        <td class="text-center">${user.lastName}</td>
+        <td class="text-center">${user.age}</td>
+        <td class="text-center">${user.email}</td>
+        <td class="text-center">${user.roles.map(role => role.name).join(", ")}</td>
+    `;
+            tableBody.appendChild(row);
+        }
+
+        // Функция для загрузки данных о пользователе на вкладке "User"
+        function loadTab(tab) {
+            // Убираем активный класс со всех ссылок в боковом меню
+            document.querySelectorAll('.sidebar a').forEach(link => link.classList.remove('active'));
+
+            // Добавляем активный класс только для текущей вкладки
+            const currentTabLink = document.querySelector(`#${tab}Tab`);
+            if (currentTabLink) {
+                currentTabLink.classList.add('active');
+            }
+
+            // Скрываем контент всех вкладок
+            const adminContent = document.getElementById('adminContent');
+            const userContent = document.getElementById('userContent');
+
+            if (adminContent) adminContent.style.display = 'none';
+            if (userContent) userContent.style.display = 'none';
+
+            // Показываем контент только для выбранной вкладки
+            if (tab === 'admin') {
+                if (adminContent) adminContent.style.display = 'block';
+                fetch('/api/users')
+                    .then(response => response.json())
+                    .then(users => renderUsersTable(users))
+                    .catch(error => console.error('Ошибка при загрузке пользователей:', error));
+            } else if (tab === 'user') {
+                if (userContent) userContent.style.display = 'block';
+                fetch('/api/users/profile')
+                    .then(response => response.json())
+                    .then(user => renderUserProfile(user))
+                    .catch(error => {
+                        console.error('Ошибка при загрузке профиля пользователя:', error);
+                        alert('Не удалось загрузить профиль пользователя.');
+                    });
+            }
+        }
+
+    </script>
+
+
+
 
         <!-- Edit User Modal -->
         <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
@@ -499,14 +692,6 @@
             });
         </script>
 
-
-
-
-
-
-
-
-
         <script>
             function openEditModal(button) {
                 const id = button.getAttribute('data-id');
@@ -565,7 +750,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="deleteUserForm" method="post">
+                        <form id="deleteUserForm">
                             <!-- ID -->
                             <div class="mb-3">
                                 <label for="delete-id" class="form-label">ID</label>
@@ -605,6 +790,41 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            // Обработчик для формы удаления пользователя
+            document.getElementById('deleteUserForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Предотвращаем перезагрузку страницы
+
+                const id = document.getElementById('delete-id').value;
+
+                fetch(`/api/users/${id}`, {
+                    method: 'DELETE', // Используем метод DELETE
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (response.status === 204) {
+                            // Успешное удаление
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUserModal'));
+                            modal.hide(); // Закрываем модальное окно
+                            loadUsers(); // Обновляем таблицу пользователей
+                        } else {
+                            // Обрабатываем ошибки
+                            return response.text().then(errMessage => {
+                                throw new Error(`Ошибка удаления: ${errMessage}`);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        alert(`Не удалось удалить пользователя: ${error.message}`);
+                    });
+            });
+        </script>
+
+
 
         <script>
             function openDeleteModal(button) {

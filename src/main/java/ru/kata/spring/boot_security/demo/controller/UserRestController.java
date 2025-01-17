@@ -3,20 +3,27 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
-import java.util.Map;
-import java.security.Principal;
+
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserRestController {
 
     private final UserService userService;
+    private final RoleService roleService; // Добавлено
 
-    public UserRestController(UserService userService) {
+    public UserRestController(UserService userService, RoleService roleService) {
         this.userService = userService;
+        this.roleService = roleService;
     }
 
     // Получить текущего пользователя
@@ -73,21 +80,22 @@ public class UserRestController {
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
+            if (user.getRoles() != null) {
+                Set<Role> roles = roleService.getRolesByIds(
+                        user.getRoles().stream()
+                                .map(Role::getId)
+                                .collect(Collectors.toList())
+                );
+                user.setRoles(roles);
+            }
             userService.saveUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Пользователь успешно создан!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
 
-    // Создать пользователя с ролями (только для админов)
-    @PostMapping("/roles")
-    public ResponseEntity<?> createUserWithRoles(@RequestBody User user, @RequestParam List<Long> roleIds) {
-        try {
-            userService.saveUserWithRoles(user, roleIds);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Пользователь с ролями успешно создан!");
+            // Возвращаем JSON-объект с подтверждением и данными пользователя
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("message", "Пользователь успешно создан!", "user", user));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -99,14 +107,12 @@ public class UserRestController {
         try {
             user.setId(id);
             userService.saveUser(user);
-            // Возвращаем JSON-объект вместо строки
             return ResponseEntity.ok(Map.of("message", "Пользователь успешно обновлён!"));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
 
     // Удалить пользователя (только для админов)
     @DeleteMapping("/{id}")
