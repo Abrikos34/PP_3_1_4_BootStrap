@@ -233,9 +233,46 @@
             </span>
             <span th:if="${currentUser == null}">Guest</span>
         </span>
-        <a th:href="@{/logout}" class="logout-button">Logout</a>
+        <a href="javascript:void(0);" class="logout-button">Logout</a>
+
+
     </div>
 </nav>
+
+
+
+
+<script>
+    document.querySelector('.logout-button').addEventListener('click', function(event) {
+        event.preventDefault(); // Отменяет стандартное поведение (перезагрузку страницы)
+
+        // Отправляем запрос на логаут через fetch API
+        fetch('/logout', { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Logout successful');
+
+                    // Скрываем элементы, которые не должны отображаться после логаута
+                    document.getElementById('adminTab').style.display = 'none';
+                    document.getElementById('userTab').style.display = 'none';
+
+                    // Обновляем UI: показываем форму входа или перенаправляем
+                    window.location.href = '/login'; // Перенаправляем на страницу логина
+                } else {
+                    console.error('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout', error);
+            });
+    });
+
+</script>
+
+
+
+
+
 
 <div class="container-fluid">
     <div class="row">
@@ -264,6 +301,7 @@
                         </button>
                     </li>
                 </ul>
+
 
                 <!-- Tab Content -->
                 <div class="tab-content mt-3">
@@ -395,47 +433,6 @@
                         });
                 });
             </script>
-
-
-
-
-
-            <!-- Profile View -->
-<!--            <div th:if="${page == 'user'}" class="mt-4">-->
-<!--                <h1 class="mb-4">User Information Page</h1>-->
-<!--                <div class="card">-->
-<!--                    <div class="card-header">-->
-<!--                        <strong>About user</strong>-->
-<!--                    </div>-->
-<!--                    <div class="card-body">-->
-<!--                        <table class="table table-striped">-->
-<!--                            <thead class="table-light">-->
-<!--                            <tr>-->
-<!--                                <th class="text-center">ID</th>-->
-<!--                                <th class="text-center">First Name</th>-->
-<!--                                <th class="text-center">Last Name</th>-->
-<!--                                <th class="text-center">Age</th>-->
-<!--                                <th class="text-center">Email</th>-->
-<!--                                <th class="text-center">Role</th>-->
-<!--                            </tr>-->
-<!--                            </thead>-->
-<!--                            <tbody>-->
-<!--                            <tr>-->
-<!--                                <td class="text-center" th:text="${currentUser.id}"></td>-->
-<!--                                <td class="text-center" th:text="${currentUser.firstName}"></td>-->
-<!--                                <td class="text-center" th:text="${currentUser.lastName}"></td>-->
-<!--                                <td class="text-center" th:text="${currentUser.age}"></td>-->
-<!--                                <td class="text-center" th:text="${currentUser.email}"></td>-->
-<!--                                <td class="text-center">-->
-<!--                                    <span th:each="role : ${currentUser.roles}" th:text="${role.name}"></span>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-<!--                            </tbody>-->
-<!--                        </table>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
 
 
         <!-- Контент для вкладки User -->
