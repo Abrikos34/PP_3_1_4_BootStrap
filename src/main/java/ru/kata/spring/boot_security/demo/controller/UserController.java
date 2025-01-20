@@ -34,7 +34,6 @@ public class UserController {
             model.addAttribute("error", "Не удалось определить пользователя.");
             return "error";
         }
-        // Используем поиск по email
         User user = userService.getUserByEmail(principal.getName());
         model.addAttribute("user", user);
         return "user";

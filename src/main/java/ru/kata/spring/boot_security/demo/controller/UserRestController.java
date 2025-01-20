@@ -70,7 +70,6 @@ public class UserRestController {
     public ResponseEntity<?> getUserById(@PathVariable Long id, Principal principal) {
         try {
             User currentUser = userService.getUserByEmail(principal.getName());
-            // Разрешаем только админам или запросить собственный профиль
             if (currentUser.getRoles().stream().noneMatch(role -> role.getName().equals("ROLE_ADMIN")) &&
                     !currentUser.getId().equals(id)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Доступ запрещен.");

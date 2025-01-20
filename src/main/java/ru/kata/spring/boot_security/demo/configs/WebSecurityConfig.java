@@ -22,14 +22,11 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Отключение CSRF для REST API
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Доступ к профилю для всех аутентифицированных пользователей
                         .requestMatchers("/api/users/profile").hasAnyRole("USER", "ADMIN")
-                        // Административные маршруты
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers("/api/roles").hasRole("ADMIN")
-                        // Открытые маршруты
                         .requestMatchers("/login", "/error", "/").permitAll()
                         .anyRequest().authenticated()
                 )
