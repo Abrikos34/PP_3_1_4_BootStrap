@@ -426,12 +426,26 @@
                         .then(user => {
                             document.getElementById('createUserForm').reset(); // Сбрасываем форму
                             loadUsers(); // Перезагружаем таблицу пользователей
+
+                            // Переключаем вкладку на "Users table"
+                            const usersTabButton = document.getElementById('users-tab');
+                            const newUserTabButton = document.getElementById('new-user-tab');
+
+                            usersTabButton.classList.add('active');
+                            newUserTabButton.classList.remove('active');
+
+                            const usersTabContent = document.getElementById('users');
+                            const newUserTabContent = document.getElementById('new-user');
+
+                            usersTabContent.classList.add('show', 'active');
+                            newUserTabContent.classList.remove('show', 'active');
                         })
                         .catch(error => {
                             console.error('Ошибка:', error);
                             alert(`Ошибка создания пользователя: ${error.message}`);
                         });
                 });
+
             </script>
 
 

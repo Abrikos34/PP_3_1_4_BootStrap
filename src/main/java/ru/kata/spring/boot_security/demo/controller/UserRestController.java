@@ -26,7 +26,6 @@ public class UserRestController {
         this.roleService = roleService;
     }
 
-    // Получить текущего пользователя
     @GetMapping("/profile")
     public ResponseEntity<User> getCurrentUser(Principal principal) {
         if (principal == null || principal.getName() == null) {
@@ -40,7 +39,6 @@ public class UserRestController {
         }
     }
 
-    // Обновить текущего пользователя
     @PutMapping("/profile")
     public ResponseEntity<?> updateCurrentUser(Principal principal, @RequestBody User user) {
         if (principal == null || principal.getName() == null) {
@@ -58,14 +56,12 @@ public class UserRestController {
         }
     }
 
-    // Получить список всех пользователей (только для админов)
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
-    // Получить пользователя по ID (только для админов)
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         try {
@@ -76,7 +72,6 @@ public class UserRestController {
         }
     }
 
-    // Создать нового пользователя (только для админов)
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
@@ -90,7 +85,6 @@ public class UserRestController {
             }
             userService.saveUser(user);
 
-            // Возвращаем JSON-объект с подтверждением и данными пользователя
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("message", "Пользователь успешно создан!", "user", user));
         } catch (RuntimeException e) {

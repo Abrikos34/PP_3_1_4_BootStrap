@@ -15,16 +15,13 @@ public class SuccessUserHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        // Настройка JSON-ответа
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
 
-        // Формируем JSON
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("status", "success");
         responseBody.put("roles", authentication.getAuthorities());
 
-        // Отправляем JSON
         ObjectMapper mapper = new ObjectMapper();
         response.getWriter().write(mapper.writeValueAsString(responseBody));
     }
