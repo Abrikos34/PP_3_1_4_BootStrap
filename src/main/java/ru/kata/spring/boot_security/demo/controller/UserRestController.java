@@ -7,6 +7,7 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 import java.util.Map;
@@ -14,12 +15,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.security.Principal;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserRestController {
 
     private final UserService userService;
-    private final RoleService roleService; // Добавлено
+    private final RoleService roleService;
 
     public UserRestController(UserService userService, RoleService roleService) {
         this.userService = userService;
@@ -56,6 +59,7 @@ public class UserRestController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
@@ -63,8 +67,15 @@ public class UserRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id, Principal principal) {
         try {
+            User currentUser = userService.getUserByEmail(principal.getName());
+            // Разрешаем только админам или запросить собственный профиль
+            if (currentUser.getRoles().stream().noneMatch(role -> role.getName().equals("ROLE_ADMIN")) &&
+                    !currentUser.getId().equals(id)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Доступ запрещен.");
+            }
+
             User user = userService.getUserById(id);
             return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
@@ -72,6 +83,7 @@ public class UserRestController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
@@ -93,9 +105,7 @@ public class UserRestController {
         }
     }
 
-
-
-    // Обновить пользователя (только для админов)
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user) {
         try {
@@ -108,7 +118,7 @@ public class UserRestController {
         }
     }
 
-    // Удалить пользователя (только для админов)
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         try {
@@ -119,3 +129,4 @@ public class UserRestController {
         }
     }
 }
+

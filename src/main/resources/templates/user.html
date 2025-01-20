@@ -148,7 +148,7 @@
             .then(user => {
                 // Populate navbar text with user data
                 const navbarText = document.getElementById('navbar-text');
-                navbarText.innerHTML = `Logged in as: <strong>${user.email}</strong> with roles: ${user.roles.map(role => role.name).join(', ')}`;
+                navbarText.innerHTML = `<strong>${user.email}</strong> with roles: ${user.roles.map(role => role.name).join(', ')}`;
 
                 // Populate user information table
                 const userInfoTable = document.getElementById('user-info');

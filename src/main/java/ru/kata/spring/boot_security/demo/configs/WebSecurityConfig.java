@@ -24,8 +24,12 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Отключение CSRF для REST API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        // Доступ к профилю для всех аутентифицированных пользователей
+                        .requestMatchers("/api/users/profile").hasAnyRole("USER", "ADMIN")
+                        // Административные маршруты
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/roles").hasRole("ADMIN")
+                        // Открытые маршруты
                         .requestMatchers("/login", "/error", "/").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -43,7 +47,7 @@ public class WebSecurityConfig {
                         .loginProcessingUrl("/process_login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .successHandler(successUserHandler) // Используем кастомный обработчик
+                        .successHandler(successUserHandler)
                         .failureUrl("/login?error")
                         .permitAll()
                 )
