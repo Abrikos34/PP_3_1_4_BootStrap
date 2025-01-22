@@ -26,7 +26,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/profile").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
-                        .requestMatchers("/api/users/login", "/error", "/").permitAll()
+                        .requestMatchers("/api/admin/login", "/error", "/").permitAll()
                         .anyRequest().authenticated()
 
                 )
@@ -35,12 +35,12 @@ public class WebSecurityConfig {
                             if (request.getRequestURI().startsWith("/api/")) {
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                             } else {
-                                response.sendRedirect("/api/users/login");
+                                response.sendRedirect("/api/admin/login");
                             }
                         })
                 )
                 .formLogin(form -> form
-                        .loginPage("/api/users/login")
+                        .loginPage("/api/admin/login")
                         .loginProcessingUrl("/process_login")
                         .usernameParameter("email")
                         .passwordParameter("password")

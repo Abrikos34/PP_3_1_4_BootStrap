@@ -48,6 +48,17 @@ public class UserServiceImpl implements UserService {
         userDao.save(user);
     }
 
+    @Override
+    @Transactional
+    public void updateUser(Long id, User user, List<Long> roleIds) {
+        user.setId(id);
+        Set<Role> roles = roleService.getRolesByIds(roleIds);
+        user.setRoles(roles);
+        validateUniqueEmail(user);
+        processUserPassword(user);
+        userDao.save(user);
+    }
+
     private void processUserPassword(User user) {
         if (user.getId() != null) {
             User existingUser = userDao.findById(user.getId())

@@ -14,4 +14,6 @@ public interface UserService {
 
     boolean canUpdateProfile(User currentUser, Long targetUserId);
     User getCurrentUser(String email);
+
+    void updateUser(Long id, User user, List<Long> roleIds); // Новый метод
 }

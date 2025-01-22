@@ -1,5 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +10,8 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -71,5 +75,16 @@ public class AdminController {
     @GetMapping("/roles")
     public ResponseEntity<List<Role>> getAllRoles() {
         return ResponseEntity.ok(roleService.getAllRoles());
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<String> loginPage() throws IOException {
+        ClassPathResource resource = new ClassPathResource("templates/login.html");
+        String htmlContent = new String(Files.readAllBytes(resource.getFile().toPath()));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=UTF-8");
+
+        return new ResponseEntity<>(htmlContent, headers, HttpStatus.OK);
     }
 }
