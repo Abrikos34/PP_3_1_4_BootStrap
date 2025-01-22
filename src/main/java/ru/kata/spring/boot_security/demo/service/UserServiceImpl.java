@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.dao.UserRepository;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 import java.util.List;
 import java.util.Set;
@@ -100,4 +100,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("Пользователь с email " + email + " не найден"));
     }
 
+    @Override
+    public boolean canUpdateProfile(User currentUser, Long targetUserId) {
+        return currentUser.getId().equals(targetUserId);
+    }
+
+    @Override
+    public User getCurrentUser(String email) {
+        return getUserByEmail(email);
+    }
 }

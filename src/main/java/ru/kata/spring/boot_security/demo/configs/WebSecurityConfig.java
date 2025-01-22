@@ -26,21 +26,21 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/profile").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
-                        .requestMatchers("/api/roles").hasRole("ADMIN")
-                        .requestMatchers("/login", "/error", "/").permitAll()
+                        .requestMatchers("/api/users/login", "/error", "/").permitAll()
                         .anyRequest().authenticated()
+
                 )
                 .httpBasic(basic -> basic
                         .authenticationEntryPoint((request, response, authException) -> {
                             if (request.getRequestURI().startsWith("/api/")) {
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                             } else {
-                                response.sendRedirect("/login");
+                                response.sendRedirect("/api/users/login");
                             }
                         })
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage("/api/users/login")
                         .loginProcessingUrl("/process_login")
                         .usernameParameter("email")
                         .passwordParameter("password")
@@ -56,6 +56,7 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -239,9 +239,6 @@
     </div>
 </nav>
 
-
-
-
 <script>
     document.querySelector('.logout-button').addEventListener('click', function(event) {
         event.preventDefault(); // Отменяет стандартное поведение (перезагрузку страницы)
@@ -268,11 +265,6 @@
     });
 
 </script>
-
-
-
-
-
 
 <div class="container-fluid">
     <div class="row">
@@ -301,7 +293,6 @@
                         </button>
                     </li>
                 </ul>
-
 
                 <!-- Tab Content -->
                 <div class="tab-content mt-3">
@@ -364,7 +355,7 @@
                                     <label for="roles" class="form-label">Role</label>
                                     <select id="roles" name="roles" class="form-select">
                                         <option value="" selected disabled>Select role</option>
-                                        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+<!--                                        <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>-->
                                     </select>
                                 </div>
                                 <!-- Submit Button -->
@@ -378,8 +369,6 @@
                     </div>
                 </div>
             </div>
-
-
 
             <script>
                 document.getElementById('createUserForm').addEventListener('submit', function (event) {
@@ -448,7 +437,6 @@
 
             </script>
 
-
         <!-- Контент для вкладки User -->
         <div id="userContent" style="display: none;">
             <h1 class="mb-4">User Information Page</h1>
@@ -476,7 +464,6 @@
             </div>
         </div>
     </div>
-
 
         <script>
             function loadTab(tab) {
@@ -518,7 +505,6 @@
                         });
                 }
             }
-
         </script>
 
     <script>
@@ -580,9 +566,6 @@
 
     </script>
 
-
-
-
         <!-- Edit User Modal -->
         <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -640,7 +623,6 @@
                 </div>
             </div>
         </div>
-
 
         <script>
             document.getElementById('editUserForm').addEventListener('submit', function (event) {
@@ -750,7 +732,6 @@
                     });
             }
         </script>
-
 
         <!-- Delete User Modal -->
         <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
