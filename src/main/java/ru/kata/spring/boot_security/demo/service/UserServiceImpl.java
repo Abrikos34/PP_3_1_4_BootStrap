@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(Long id, User user, List<Long> roleIds) {
         user.setId(id);
-        user.setId(id);
         Set<Role> roles = roleService.getRolesByIds(roleIds);
         user.setRoles(roles);
         validateUniqueEmail(user);
