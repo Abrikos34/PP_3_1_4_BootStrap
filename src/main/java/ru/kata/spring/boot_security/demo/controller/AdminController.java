@@ -54,7 +54,7 @@ public class AdminController {
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User user, @RequestParam List<Long> roleIds) {
         try {
-            userService.updateUser(id, user, roleIds); // Передаем ID в сервис
+            userService.updateUser(id, user, roleIds);
             return ResponseEntity.ok(Map.of("message", "User updated successfully!"));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
